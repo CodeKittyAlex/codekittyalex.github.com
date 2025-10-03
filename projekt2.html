@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wacky Dev Hub</title>
+  <style>
+    :root{ --bg:#0d1117; --accent:#58a6ff; --neon:#f778ba }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: 'Courier New', monospace; background: linear-gradient(180deg,#0d1117,#161b22); color:#c9d1d9; overflow-x:hidden;
+    }
+    header{padding:20px; background:#161b22; text-align:center; border-bottom:1px solid #30363d}
+    header h1{font-size:clamp(20px,5vw,48px); color:var(--accent); text-shadow:0 0 8px #000}
+    .container{padding:30px 6vw 60px}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:20px}
+    .card{background:#21262d; padding:18px; border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.4)}
+    .card h2{color:var(--accent)}
+    .neon{background:linear-gradient(90deg,var(--accent), var(--neon)); color:#0d1117; border:none; padding:6px 12px; font-weight:700; border-radius:6px; cursor:pointer}
+    pre, code{background:#0d1117; color:#79c0ff; padding:10px; border-radius:6px; display:block; overflow-x:auto;}
+    footer{margin-top:40px; text-align:center; color:#8b949e}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💻 Wacky Dev Hub</h1>
+    <p>Where programmers break the rules (but lint passes anyway).</p>
+  </header>
+  <main class="container">
+    <div class="grid" role="list">
+      <section class="card" role="listitem">
+        <h2>Random Commit Message</h2>
+        <p>Generate a random commit message for when you have no idea.</p>
+        <button id="commitBtn" class="neon">git commit -m</button>
+        <pre id="commitOut">— waiting —</pre>
+      </section>
+
+      <section class="card">
+        <h2>Stack Overflow Roulette</h2>
+        <p>Click to open a random Stack Overflow page.</p>
+        <button id="soBtn" class="neon">Take me there!</button>
+      </section>
+
+      <section class="card">
+        <h2>ASCII Art Generator</h2>
+        <p>Turn text into ASCII banners.</p>
+        <input id="asciiInput" type="text" value="Hello" style="width:100%">
+        <button id="asciiBtn" class="neon">Render</button>
+        <pre id="asciiOut"></pre>
+      </section>
+
+      <section class="card">
+        <h2>Regex Tester</h2>
+        <p>Enter a regex and some text. See what matches.</p>
+        <input id="regexPattern" placeholder="/hello/" style="width:100%">
+        <textarea id="regexText" style="width:100%;height:80px;">hello world</textarea>
+        <button id="regexBtn" class="neon">Test</button>
+        <pre id="regexOut"></pre>
+      </section>
+
+      <section class="card">
+        <h2>Code Confetti</h2>
+        <p>Celebrate finishing that bug fix!</p>
+        <button id="confetti" class="neon">🎉 Celebrate</button>
+      </section>
+    </div>
+    <footer>
+      <small>Made by devs, for devs. Probably not production ready 🚧</small>
+    </footer>
+  </main>
+
+  <script>
+    // Commit messages
+    const commits = [
+      "Fixed stuff.",
+      "Refactored the thing.",
+      "Magic numbers removed (but added elsewhere).",
+      "Bug? What bug?",
+      "WIP: pray it works",
+      "hotfix: because prod is broken",
+      "feat: add unicorn support"
+    ];
+    document.getElementById('commitBtn').addEventListener('click',()=>{
+      const msg = commits[Math.floor(Math.random()*commits.length)];
+      document.getElementById('commitOut').textContent = `git commit -m \"${msg}\"`;
+    });
+
+    // Stack Overflow roulette
+    document.getElementById('soBtn').addEventListener('click',()=>{
+      window.open('https://stackoverflow.com/questions/'+Math.floor(Math.random()*7000000), '_blank');
+    });
+
+    // ASCII Art (mini figlet-like)
+    function textToAscii(str){
+      return str.split('').map(c=>c.charCodeAt(0).toString(16)).join(' ');
+    }
+    document.getElementById('asciiBtn').addEventListener('click',()=>{
+      const val=document.getElementById('asciiInput').value;
+      document.getElementById('asciiOut').textContent=textToAscii(val);
+    });
+
+    // Regex tester
+    document.getElementById('regexBtn').addEventListener('click',()=>{
+      try{
+        const pattern=document.getElementById('regexPattern').value;
+        const text=document.getElementById('regexText').value;
+        const regex=new RegExp(pattern.replace(/^\/(.*)\/$/,'$1'));
+        const match=text.match(regex);
+        document.getElementById('regexOut').textContent=match? `Matched: ${match[0]}`: 'No match';
+      }catch(e){
+        document.getElementById('regexOut').textContent='Invalid regex';
+      }
+    });
+
+    // Confetti
+    document.getElementById('confetti').addEventListener('click',()=>{
+      for(let i=0;i<60;i++){
+        const c=document.createElement('div');
+        c.style.position='fixed'; c.style.left=Math.random()*100+'%'; c.style.top='-10px'; c.style.width='8px'; c.style.height='12px'; c.style.borderRadius='2px';
+        c.style.background=`hsl(${Math.random()*360},70%,60%)`; c.style.zIndex=9999;
+        document.body.appendChild(c);
+        const fall=c.animate([{transform:'translateY(0)'},{transform:`translateY(${window.innerHeight+200}px)`}],{duration:2000+Math.random()*2000, easing:'ease-out'});
+        fall.onfinish=()=>c.remove();
+      }
+    });
+  </script>
+</body>
+</html>
